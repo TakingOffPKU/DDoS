@@ -12,7 +12,7 @@ import sys
 import threading
 import time
 
-THREAD_DEFAULT = 100
+THREAD_DEFAULT = 1000
 TARGET_DEFAULT = "47.94.138.231"
 PORT_DEFAULT = 80
 
