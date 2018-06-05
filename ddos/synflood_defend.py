@@ -115,12 +115,10 @@ def catchPkt(fireip, fireport):
 
 def main():
 	args = parsearg()
-	port = 9645
-	ip = "127.0.0.1"
 	if args.port and args.ip:
 		print("IP of firewall is %s; port of firewall is %s." %(args.ip, args.port))
-		ip = args.ip
-		port = int(args.port)
+		FIREIP = args.ip
+		FIREPORT = int(args.port)
 	else:
 		pass
 		help()
@@ -130,7 +128,7 @@ def main():
 	#s.bind((FIREIP, FIREPORT))
 	#s.listen(5)
 
-	catchPkt(ip, port)
+	catchPkt(FIREIP, FIREPORT)
 
 if __name__ == '__main__':
 	main()
