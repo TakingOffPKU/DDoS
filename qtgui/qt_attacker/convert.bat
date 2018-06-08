@@ -1,0 +1,1 @@
+pyuic5 -o attacker_ui.py mainwindow.ui

