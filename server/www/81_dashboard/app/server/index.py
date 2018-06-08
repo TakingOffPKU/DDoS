@@ -3,11 +3,11 @@
 from __future__ import print_function
 import os
 import sys
-# from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer, test as _test
-from http.server import BaseHTTPRequestHandler, HTTPServer, test as _test
+from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer, test as _test
+# from http.server import BaseHTTPRequestHandler, HTTPServer, test as _test
 import subprocess
-# from SocketServer import ThreadingMixIn
-from socketserver import ThreadingMixIn
+from SocketServer import ThreadingMixIn
+# from socketserver import ThreadingMixIn
 import argparse
 
 
