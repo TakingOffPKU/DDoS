@@ -90,7 +90,7 @@ class sendGET(threading.Thread):
         
     def run(self):
         try:
-            print ("\r%d threads running" % sendGET.THREAD, end="")
+            #print ("\r%d threads running" % sendGET.THREAD, end="")
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.connect((self.__target, self.__port))
             tmp = ''.join(random.sample(string.ascii_letters+string.digits+string.punctuation,

