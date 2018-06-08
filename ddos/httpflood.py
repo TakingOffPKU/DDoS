@@ -55,9 +55,9 @@ def getopt(ARGS):
         if i % 2 == 1:
             if ARGS[i] in ['-H', '--host']:
                 ret['host'] = str(ARGS[i+1])
-            if ARGS[i] in ['-P', '--port']:
+            elif ARGS[i] in ['-P', '--port']:
                 ret['port'] = int(ARGS[i+1])
-            if ARGS[i] in ['-T', '--thread']:
+            elif ARGS[i] in ['-T', '--thread']:
                 ret['thread'] = int(ARGS[i+1])
             else:
                 try:

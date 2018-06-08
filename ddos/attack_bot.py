@@ -56,10 +56,7 @@ def getopt(ARGS):
         except:
             print_help()
             exit(0)
-    ret = {"port": PORT_DEFAULT,
-           "synflood": SYNFLOOD_THREAD_DEFAULT,
-           "httpflood": HTTPFLOOD_THREAD_DEFAULT,
-           "slowloris": SLOWLORIS_THREAD_DEFAULT}
+    ret = {"port": PORT_DEFAULT}
     for i in range(1, len(ARGS)):
         if i % 2 == 1:
             if ARGS[i] in ['-P', '--port']:
