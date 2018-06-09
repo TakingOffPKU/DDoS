@@ -1,3 +1,6 @@
+# Cache files
+*__pycache__
+
 # ImGui setting
 *imgui.ini
 
