@@ -186,5 +186,8 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = myApp()
     window.setWindowTitle("TakingOff DDoS")
+    icon = QIcon()
+    icon.addPixmap(QPixmap("../img/icon.ico"))
+    window.setWindowIcon(icon)
     window.show()
     sys.exit(app.exec_())

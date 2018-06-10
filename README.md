@@ -1,5 +1,7 @@
 # DDoS in Lab
 
+![image](https://github.com/TakingOffPKU/DDoS/blob/master/img/icon.ico)
+
 
 
 ## Goal
