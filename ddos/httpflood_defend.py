@@ -38,11 +38,18 @@ class Timer:
 class HTTPFilter:
     def __init__(self):
         self.timer_map = {}
+        self.black_list = {}
 
     def is_abnormal(self, src):
+        if self.black_list[src] >= 3:
+            return True
+
         if src not in self.timer_map.keys():
             self.timer_map[src] = Timer()
 
         timer = self.timer_map[src]
         timer.new_access()
-        return timer.is_abnormal()
+        result = timer.is_abnormal()
+        if result:
+            self.black_list[src] += 1
+        return result
