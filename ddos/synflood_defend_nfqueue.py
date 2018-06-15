@@ -13,7 +13,8 @@ def print_and_accept(pkt):
     if hw:
         ip_pkt = IP(pkt.get_payload())
         tcp_pkt = TCP(pkt.get_payload())
-        print('HTTP request from: {}:{}'.format(ip_pkt.src, tcp_pkt.sport))
+        if(tcp_pkt.dport == SERVERPORT)
+            print('HTTP request from: {}:{}'.format(ip_pkt.src, tcp_pkt.sport))
         print(tcp_pkt.payload)
     pkt.accept()
 
