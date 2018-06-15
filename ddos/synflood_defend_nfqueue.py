@@ -17,7 +17,9 @@ def print_and_accept(pkt):
         tcp_pkt = TCP(pkt.get_payload())
 
         src = ip_pkt.src
-        if src in white_list:
+        if src == '127.0.0.1':
+            pkt.accept()
+        elif src in white_list:
             print('{} is in white_list'.format(src))
             pkt.accept()
         elif src in waitting_list:
@@ -27,7 +29,7 @@ def print_and_accept(pkt):
                 waitting_list.remove(src)
                 pkt.accept()
             else:
-                print('{} has been filtered'.format(src))
+                print('{} has been filtered with no A flag'.format(src))
                 pkt.drop()
         else:
             if tcp_pkt.flags == 'S':
@@ -35,7 +37,7 @@ def print_and_accept(pkt):
                 waitting_list.add(src)
                 pkt.accept()
             else:
-                print('{} has been filtered'.format(src))
+                print('{} has been filtered with no S flag'.format(src))
                 pkt.drop()
 
 def main():
