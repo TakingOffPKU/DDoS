@@ -13,6 +13,8 @@ def print_and_accept(pkt):
     hw = pkt.get_hw()
     if hw:
         print(":".join("{:02x}".format(ord(c)) for c in hw[0:6]))
+        scpkt = IP(hw)
+        print(scpkt)
     pkt.accept()
 
 def main():
@@ -23,7 +25,7 @@ def main():
     try:
         nfqueue.run()
     except KeyboardInterrupt:
-        print('Keyboard Interrrupt.')
+        print('\nKeyboard Interrrupt.')
         print('iptables clean: {}'.format(iptables_clean))
         os.system(iptables_clean)
         exit(1)
