@@ -1,7 +1,13 @@
 from netfilterqueue import NetfilterQueue
 from scapy.all import *
-from scapy_http import *
+form scapy.layers
 import os
+try:
+    # This import works from the project directory
+    import scapy_http.http
+except ImportError:
+    # If you installed this package via pip, you just need to execute this
+    from scapy.layers import http
 
 SERVERPORT = 8010
 
@@ -41,8 +47,9 @@ def print_and_accept(pkt):
             else:
                 print('{} has been filtered with no S flag'.format(src))
                 # pkt.drop()
-        if tcp.payload:
-            print(tcp_pkt.load.show())
+        if tcp_pkt.payload:
+            http_request = http(tcp_pkt)
+            print(http_request)
         pkt.accept()
 
 def main():
