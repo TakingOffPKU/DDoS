@@ -2,8 +2,10 @@ from netfilterqueue import NetfilterQueue
 from scapy.all import *
 import os
 
-# SERVERIP = "47.94.138.231"
 SERVERPORT = 8010
+
+iptables_init = 'iptables -I INPUT -p tcp --dport {} -j NFQUEUE --queue-num 1'.format(SERVERPORT)
+iptables_clean = 'iptables -F'
 
 
 def print_and_accept(pkt):
@@ -14,16 +16,20 @@ def print_and_accept(pkt):
     pkt.accept()
 
 def main():
+    print('iptables init: {}'.format(iptables_init))
+    os.system(iptables_init)
     nfqueue = NetfilterQueue()
     nfqueue.bind(1, print_and_accept)
     try:
         nfqueue.run()
     except KeyboardInterrupt:
         print('Keyboard Interrrupt.')
+        print('iptables clean: {}'.format(iptables_clean))
+        os.system(iptables_clean)
         exit(1)
 
     nfqueue.unbind()
-
+    os.system(iptables_clean)
 
 if __name__ == "__main__":
     main()
