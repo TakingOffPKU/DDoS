@@ -1,5 +1,6 @@
 from netfilterqueue import NetfilterQueue
 from scapy.all import *
+from scapy_http import *
 import os
 
 SERVERPORT = 8010
@@ -40,9 +41,8 @@ def print_and_accept(pkt):
             else:
                 print('{} has been filtered with no S flag'.format(src))
                 # pkt.drop()
-
-        if tcp_pkt.load:
-            print(tcp_pkt.load)
+        if tcp.payload:
+            print(tcp_pkt.load.show())
         pkt.accept()
 
 def main():
