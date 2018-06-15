@@ -18,18 +18,24 @@ def print_and_accept(pkt):
 
         src = ip_pkt.src
         if src in white_list:
+            print('{} is in white_list'.format(src))
             pkt.accept()
         elif src in waitting_list:
             if tcp_pkt.flags == 'A':
+                print('{} was moved to wait_list'.format(src))
                 white_list.add(src)
                 waitting_list.remove(src)
                 pkt.accept()
             else:
+                print('{} has been filtered'.format(src))
                 pkt.drop()
         else:
             if tcp_pkt.flags == 'S':
-                white_list.add(src)
+                print('{} was added to waitting_list'.format(src))
+                waitting_list.add(src)
+                pkt.accept()
             else:
+                print('{} has been filtered'.format(src))
                 pkt.drop()
 
 def main():
