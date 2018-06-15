@@ -11,9 +11,9 @@ import threading
 import time
 import scapy.all as sca
 
-THREAD_DEFAULT = 1000
-TARGET_DEFAULT = "47.94.138.231"
-PORT_DEFAULT = 80
+THREAD_DEFAULT = 100
+TARGET_DEFAULT = "47.106.157.25"
+PORT_DEFAULT = 8010
 
 
 def print_help():

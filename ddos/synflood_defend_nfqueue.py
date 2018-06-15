@@ -40,6 +40,10 @@ def print_and_accept(pkt):
             else:
                 print('{} has been filtered with no S flag'.format(src))
                 # pkt.drop()
+
+        raw_pkt = Raw(pkt.get_payload())
+        if raw_pkt.load:
+            print(raw_pkt.load)
         pkt.accept()
 
 def main():
