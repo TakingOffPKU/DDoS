@@ -11,9 +11,10 @@ import time
 #import scapy.all as sca
 from socket import *
 
-THREAD_DEFAULT = 500
-TARGET_DEFAULT = "47.94.138.231"
-PORT_DEFAULT = 80
+THREAD_DEFAULT = 300
+TARGET_DEFAULT = "47.106.157.25"
+PORT_DEFAULT = 8000
+
 user_agents = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36",
