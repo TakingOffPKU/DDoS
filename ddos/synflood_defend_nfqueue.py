@@ -1,6 +1,6 @@
 from netfilterqueue import NetfilterQueue
 from scapy.all import *
-from httpflood_defend import HTTPRequest, HTTPFilter
+from httpflood_defend import HTTPFilter
 import os
 try:
     # This import works from the project directory

@@ -5,7 +5,7 @@ import urllib
 import time
 
 TIME_INTERVAL = 1
-TIME_COUNTS = 5
+TIME_COUNTS = 20
 
 
 class HTTPRequest(BaseHTTPRequestHandler):
