@@ -9,12 +9,12 @@ iptables_clean = 'iptables -F'
 
 
 def print_and_accept(pkt):
-    print(pkt)
     hw = pkt.get_hw()
     if hw:
-        print(":".join("{:02x}".format(ord(c)) for c in hw[0:6]))
-        scpkt = IP(pkt.get_payload())
-        print(scpkt)
+        ip_pkt = IP(pkt.get_payload())
+        if ip_pkt.port == SERVERPORT:
+            tcp_pkt = TCP(pkt.get_payload())
+            print('Http request from: {}:{}'.format(ip_pkt.port, tcp_pkt.sport))
     pkt.accept()
 
 def main():
