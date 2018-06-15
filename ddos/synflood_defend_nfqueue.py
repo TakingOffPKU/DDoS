@@ -13,7 +13,7 @@ def print_and_accept(pkt):
     hw = pkt.get_hw()
     if hw:
         print(":".join("{:02x}".format(ord(c)) for c in hw[0:6]))
-        scpkt = IP(hw)
+        scpkt = IP(pkt.get_payload())
         print(scpkt)
     pkt.accept()
 
