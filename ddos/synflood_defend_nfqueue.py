@@ -18,27 +18,29 @@ def print_and_accept(pkt):
 
         src = ip_pkt.src
         if src == '127.0.0.1':
-            pkt.accept()
+            print('accept local package')
+            # pkt.accept()
         elif src in white_list:
             print('{} is in white_list'.format(src))
-            pkt.accept()
+            # pkt.accept()
         elif src in waitting_list:
             if tcp_pkt.flags == 'A':
                 print('{} was moved to wait_list'.format(src))
                 white_list.add(src)
                 waitting_list.remove(src)
-                pkt.accept()
+                # pkt.accept()
             else:
                 print('{} has been filtered with no A flag'.format(src))
-                pkt.drop()
+                # pkt.drop()
         else:
             if tcp_pkt.flags == 'S':
                 print('{} was added to waitting_list'.format(src))
                 waitting_list.add(src)
-                pkt.accept()
+                # pkt.accept()
             else:
                 print('{} has been filtered with no S flag'.format(src))
-                pkt.drop()
+                # pkt.drop()
+        pkt.accept()
 
 def main():
     print('iptables init: {}'.format(iptables_init))
