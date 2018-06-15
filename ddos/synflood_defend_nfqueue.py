@@ -30,6 +30,8 @@ def print_and_accept(pkt):
         src = ip_pkt.src
         if src == '127.0.0.1':
             print('accept local package')
+            pkt.accept()
+            return
             # pkt.accept()
         elif src in white_list:
             print('{} is in white_list'.format(src))
