@@ -6,6 +6,7 @@ import time
 
 TIME_INTERVAL = 1
 TIME_COUNTS = 10
+BLOCK_COUNT = 3
 
 
 class HTTPRequest(BaseHTTPRequestHandler):
@@ -41,7 +42,10 @@ class HTTPFilter:
         self.black_list = {}
 
     def is_abnormal(self, src):
-        if src in self.black_list.keys() and self.black_list[src] >= 3:
+        if src not in self.black_list.keys():
+            self.black_list[src] = 0
+        cnt = self.black_list[src]
+        if cnt >= BLOCK_COUNT:
             return True
 
         if src not in self.timer_map.keys():
@@ -51,6 +55,5 @@ class HTTPFilter:
         timer.new_access()
         result = timer.is_abnormal()
         if result:
-            cnt = self.black_list[src]
             self.black_list[src] = cnt + 1
         return result
