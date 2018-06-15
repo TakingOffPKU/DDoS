@@ -1,10 +1,10 @@
 from netfilterqueue import NetfilterQueue
 from scapy.all import *
-form scapy.layers
+from httpflood_defend import HTTPRequest, HTTPFilter
 import os
 try:
     # This import works from the project directory
-    import scapy_http.http
+    import scapy_http.http as http
 except ImportError:
     # If you installed this package via pip, you just need to execute this
     from scapy.layers import http
@@ -16,6 +16,8 @@ iptables_clean = 'iptables -F'
 
 white_list = set([])
 waitting_list = set([])
+
+filter = HTTPFilter()
 
 def print_and_accept(pkt):
     hw = pkt.get_hw()
@@ -41,16 +43,18 @@ def print_and_accept(pkt):
                 # pkt.drop()
         else:
             if tcp_pkt.flags == 'S':
-                print('{} was added to waitting_list'.format(src))
+                # print('{} was added to waitting_list'.format(src))
                 waitting_list.add(src)
                 # pkt.accept()
             else:
-                print('{} has been filtered with no S flag'.format(src))
+                # print('{} has been filtered with no S flag'.format(src))
                 # pkt.drop()
-        if tcp_pkt.payload:
-            http_request = http(tcp_pkt)
-            print(http_request)
-        pkt.accept()
+        if not filter.is_abnormal(src):
+            print('Accepted: {}'.format(src))
+            pkt.accept()
+        else:
+            print('Dropped: {}'.format(src))
+            pkt.drop()
 
 def main():
     print('iptables init: {}'.format(iptables_init))
