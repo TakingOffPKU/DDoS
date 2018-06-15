@@ -5,7 +5,7 @@ import urllib
 import time
 
 TIME_INTERVAL = 1
-TIME_COUNTS = 20
+TIME_COUNTS = 10
 
 
 class HTTPRequest(BaseHTTPRequestHandler):
@@ -41,7 +41,7 @@ class HTTPFilter:
         self.black_list = {}
 
     def is_abnormal(self, src):
-        if self.black_list[src] >= 3:
+        if src in self.black_list.keys() and self.black_list[src] >= 3:
             return True
 
         if src not in self.timer_map.keys():
