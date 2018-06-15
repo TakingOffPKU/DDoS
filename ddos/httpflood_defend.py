@@ -5,8 +5,8 @@ import urllib
 import time
 
 TIME_INTERVAL = 1
-TIME_COUNTS = 10
-BLOCK_COUNT = 3
+TIME_COUNTS = 15
+BLOCK_COUNT = 5
 
 
 class HTTPRequest(BaseHTTPRequestHandler):

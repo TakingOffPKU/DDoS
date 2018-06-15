@@ -9,7 +9,7 @@ except ImportError:
     # If you installed this package via pip, you just need to execute this
     from scapy.layers import http
 
-SERVERPORT = 8010
+SERVERPORT = 8000
 
 iptables_init = 'iptables -I INPUT -p tcp --dport {} -j NFQUEUE --queue-num 1'.format(
     SERVERPORT)

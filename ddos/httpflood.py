@@ -13,7 +13,7 @@ import time
 
 THREAD_DEFAULT = 300
 TARGET_DEFAULT = "47.106.157.25"
-PORT_DEFAULT = 8010
+PORT_DEFAULT = 8000
 
 
 def print_help():
