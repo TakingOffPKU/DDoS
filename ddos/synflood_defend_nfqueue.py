@@ -11,13 +11,15 @@ except ImportError:
 
 SERVERPORT = 8010
 
-iptables_init = 'iptables -I INPUT -p tcp --dport {} -j NFQUEUE --queue-num 1'.format(SERVERPORT)
+iptables_init = 'iptables -I INPUT -p tcp --dport {} -j NFQUEUE --queue-num 1'.format(
+    SERVERPORT)
 iptables_clean = 'iptables -F'
 
 white_list = set([])
 waitting_list = set([])
 
 filter = HTTPFilter()
+
 
 def print_and_accept(pkt):
     hw = pkt.get_hw()
@@ -46,15 +48,17 @@ def print_and_accept(pkt):
                 # print('{} was added to waitting_list'.format(src))
                 waitting_list.add(src)
                 # pkt.accept()
-            else:
+            # else:
                 # print('{} has been filtered with no S flag'.format(src))
                 # pkt.drop()
+
         if not filter.is_abnormal(src):
             print('Accepted: {}'.format(src))
             pkt.accept()
         else:
             print('Dropped: {}'.format(src))
             pkt.drop()
+
 
 def main():
     print('iptables init: {}'.format(iptables_init))
@@ -71,6 +75,7 @@ def main():
 
     nfqueue.unbind()
     os.system(iptables_clean)
+
 
 if __name__ == "__main__":
     main()
