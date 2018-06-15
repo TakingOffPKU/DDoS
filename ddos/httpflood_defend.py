@@ -51,5 +51,6 @@ class HTTPFilter:
         timer.new_access()
         result = timer.is_abnormal()
         if result:
-            self.black_list[src] += 1
+            cnt = self.black_list[src]
+            self.black_list[src] = cnt + 1
         return result
