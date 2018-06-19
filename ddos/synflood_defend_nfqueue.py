@@ -32,7 +32,6 @@ def print_and_accept(pkt):
             print('accept local package')
             pkt.accept()
             return
-            # pkt.accept()
         elif src in white_list:
             print('{} is in white_list'.format(src))
             # pkt.accept()

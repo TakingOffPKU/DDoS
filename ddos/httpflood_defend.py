@@ -5,7 +5,7 @@ import urllib
 import time
 
 TIME_INTERVAL = 1
-TIME_COUNTS = 15
+TIME_COUNTS = 35
 BLOCK_COUNT = 5
 
 
